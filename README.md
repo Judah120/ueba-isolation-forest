@@ -4,9 +4,9 @@
 > Companion code repository for the manuscript in preparation.  
 > Baseline implementation, feature sensitivity analysis, and Security Decay findings.
 
-**Author:** Judah Idowu · [judahidowu.lovable.app](https://judahidowu.lovable.app) · [LinkedIn](https://linkedin.com/in/judah-idowu)  
+**Author:** Judah Idowu · [LinkedIn](https://linkedin.com/in/judah-idowu)  
 **Related publication:** [Deploying Isolation Forest at the Edge (IRE Journals, 2025)](https://doi.org/10.13140/RG.2.2.23518.14408)  
-**Related repos:** [llm-injection-detector](https://github.com/judahidowu/llm-injection-detector) · [anomaly-detector-benchmark](https://github.com/judahidowu/anomaly-detector-benchmark)
+**Related repos:** [llm-injection-detector](https://github.com/Judah120/llm-injection-detector) · [anomaly-detector-benchmark](https://github.com/Judah120/anomaly-detector-benchmark)
 
 ---
 
