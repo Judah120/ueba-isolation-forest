@@ -16,7 +16,7 @@ User and Entity Behavioral Analytics (UEBA) systems profile normal behaviour and
 
 **How robust is an Isolation Forest-based UEBA system when an adversary deliberately modifies attack traffic to resemble normal behaviour?**
 
-The study establishes a clean behavioral baseline on NSL-KDD, computes a feature sensitivity matrix to identify the highest-leverage inputs, then systematically perturbs detected attack samples across three evasion scenarios. The results reveal a non-intuitive vulnerability profile — most critically, an **Extremity Paradox** in which extreme feature stripping produces *less* evasion than moderate perturbation.
+The study establishes a clean behavioral baseline on NSL-KDD, computes a feature sensitivity matrix to identify the highest-leverage inputs, then systematically perturbs detected attack samples across three evasion scenarios. The results reveal a non-intuitive vulnerability profile, most critically, an **Extremity Paradox** in which extreme feature stripping produces *less* evasion than moderate perturbation.
 
 ---
 
@@ -45,7 +45,7 @@ The study establishes a clean behavioral baseline on NSL-KDD, computes a feature
 | **Actual: Normal** | TN = 66,669 | FP = 674 |
 | **Actual: Attack** | FN = 8,760 | TP = 49,870 |
 
-**Key asymmetry:** The model is highly precise when declaring an attack (99%) — generating only 674 false alarms out of 67,343 normal samples. Its vulnerability lies in recall (85%) — 8,760 attacks are missed outright. The 49,870 correctly detected attacks (True Positives) form the target population for the adversarial phase.
+**Key asymmetry:** The model is highly precise when declaring an attack (99%), generating only 674 false alarms out of 67,343 normal samples. Its vulnerability lies in recall (85%), 8,760 attacks are missed outright. The 49,870 correctly detected attacks (True Positives) form the target population for the adversarial phase.
 
 ![Classification Report](figures/classification_report.png)
 
@@ -72,7 +72,7 @@ To identify the highest-leverage evasion targets, a correlation-based sensitivit
 
 ![Feature Sensitivity](figures/feature_sensitivity.png)
 
-Five of the top 10 features belong to the `dst_host_*` and `*serror_rate` families — connection-level aggregates capturing the rate of SYN errors and same-service traffic ratios. These are the features that most strongly separate attack profiles from normal baselines, and therefore represent the primary leverage points for both evasion and detection.
+Five of the top 10 features belong to the `dst_host_*` and `*serror_rate` families. These are the connection-level aggregates capturing the rate of SYN errors and same-service traffic ratios. These are the features that most strongly separate attack profiles from normal baselines, and therefore represent the primary leverage points for both evasion and detection.
 
 ---
 
@@ -96,7 +96,7 @@ The linear relationship suggests the Isolation Forest scores `dst_host_srv_count
 **Result:** 306 evasions / 49,870 TPs — **0.61% evasion rate**  
 **Curve shape:** Non-linear — evasion peaks then declines at higher reduction levels.
 
-**Key finding:** Coordinating three high-leverage features produces *fewer* evasions than manipulating one. Simultaneously adjusting correlated features creates feature combinations that deviate from both the attack distribution and the normal distribution — the Isolation Forest identifies them as a third, novel anomaly cluster. This is the **Coordination Paradox**: more manipulated features can mean more detectable, not less.
+**Key finding:** Coordinating three high-leverage features produces *fewer* evasions than manipulating one. Simultaneously adjusting correlated features creates feature combinations that deviate from both the attack distribution and the normal distribution. The Isolation Forest identifies them as a third, novel anomaly cluster. This is the **Coordination Paradox**: more manipulated features can mean more detectable, not less.
 
 ### Experiment C — Extreme Stealth Stress Test
 
@@ -104,7 +104,7 @@ The linear relationship suggests the Isolation Forest scores `dst_host_srv_count
 **Result:** ~55 evasions / 49,870 TPs — **~0.11% evasion rate**  
 **Curve shape:** Inverted — evasion *decreases* as perturbation becomes more extreme.
 
-**The Extremity Paradox:** Isolation Forest isolates anomalies by identifying samples that require shorter-than-average partition paths in random decision trees. Extreme high values are isolated via short paths — but so are extreme low values. Stripping multiple features to near-zero creates a distinct structural outlier cluster that the forest isolates *more readily* than it would the original attack samples. The attacker achieves less evasion at 95% reduction than at 25%.
+**The Extremity Paradox:** Isolation Forest isolates anomalies by identifying samples that require shorter-than-average partition paths in random decision trees. Extreme high values are isolated via short paths, but so are extreme low values. Stripping multiple features to near-zero creates a distinct structural outlier cluster that the forest isolates *more readily* than it would the original attack samples. The attacker achieves less evasion at 95% reduction than at 25%.
 
 ![Security Decay](figures/security_decay.png)
 
@@ -115,10 +115,10 @@ The linear relationship suggests the Isolation Forest scores `dst_host_srv_count
 The three evasion experiments, taken together, define a non-linear **Security Decay** profile:
 
 - **Single-feature tampering** produces the highest absolute evasion rate (0.83%) with predictable linear growth
-- **Multi-feature coordination** produces non-linear, lower evasion — coordinated changes are self-defeating beyond a certain threshold
-- **Extreme stripping** produces the lowest evasion — the Extremity Paradox inverts the expected relationship between perturbation intensity and evasion success
+- **Multi-feature coordination** produces non-linear, lower evasion. Coordinated changes are self-defeating beyond a certain threshold
+- **Extreme stripping** produces the lowest evasion. The Extremity Paradox inverts the expected relationship between perturbation intensity and evasion success
 
-The implication for defenders: Isolation Forest provides **asymmetric robustness** — it is most vulnerable to moderate, single-feature, targeted tampering. Both extreme perturbation and multi-feature coordination paradoxically strengthen detection.
+The implication for defenders: Isolation Forest provides **asymmetric robustness**. It is most vulnerable to moderate, single-feature, targeted tampering. Both extreme perturbation and multi-feature coordination paradoxically strengthen detection.
 
 ---
 
@@ -128,7 +128,7 @@ A fine-grained sweep (2% increments, 0–40% reduction, 5 features) identifies t
 
 ![Goldilocks Zone](figures/goldilocks_zone.png)
 
-Maximum evasion occurs in the **16%–28% reduction range** — the Goldilocks Zone where the perturbation is large enough to move samples toward the normal boundary but not so extreme as to create a new outlier cluster. This window is narrow: both under-perturbation and over-perturbation reduce evasion effectiveness.
+Maximum evasion occurs in the **16%–28% reduction range** i.e the Goldilocks Zone where the perturbation is large enough to move samples toward the normal boundary but not so extreme as to create a new outlier cluster. This window is narrow: both under-perturbation and over-perturbation reduce evasion effectiveness.
 
 **Research implication:** A defender who knows this window can monitor for attack traffic in precisely this perturbation range. An adaptive adversary who optimises for this window faces a narrow target that is sensitive to miscalibration.
 
@@ -161,18 +161,6 @@ Inject the 0.83% and 0.61% successful evasion samples back into the training set
 
 ---
 
-## Reproducibility Note
-
-This repository uses a synthetic NSL-KDD replication by default, which reproduces the exact class distribution (125,973 samples: 67,343 normal + 58,630 attack) but not the precise feature correlations of real network traffic. Baseline metrics on the synthetic data differ from the manuscript (which uses the real NSL-KDD dataset).
-
-**To reproduce manuscript results exactly:**
-
-1. Download `KDDTrain+.txt` and `KDDTest+.txt` from the [UNB NSL-KDD page](https://www.unb.ca/cic/datasets/nsl.html)
-2. Place both files in the `data/` directory
-3. Run `python src/experiment.py` — the pipeline auto-detects real data
-
----
-
 ## Project Structure
 
 ```
@@ -184,7 +172,7 @@ ueba-isolation-forest/
 │   └── figures.py      # All 7 figures
 ├── notebooks/
 │   └── analysis.ipynb  # End-to-end walkthrough
-├── data/               # Place KDDTrain+.txt / KDDTest+.txt here
+├── data/               # KDDTrain+.txt / KDDTest+.txt here
 ├── results/            # Experiment outputs (JSON)
 ├── figures/            # All plots (PNG)
 └── requirements.txt
@@ -195,7 +183,7 @@ ueba-isolation-forest/
 ## Quickstart
 
 ```bash
-git clone https://github.com/judahidowu/ueba-isolation-forest
+git clone https://github.com/Judah120/ueba-isolation-forest
 cd ueba-isolation-forest
 pip install -r requirements.txt
 
@@ -217,7 +205,3 @@ For the published predecessor:
 > **Idowu, J.** (2025). "Deploying Isolation Forest at the Edge: A Synthetic Data-driven Approach for Real-time IoT Anomaly Detection." *Iconic Research and Engineering Journals*, 8(7), 643–652. [https://doi.org/10.13140/RG.2.2.23518.14408](https://doi.org/10.13140/RG.2.2.23518.14408)
 
 ---
-
-## License
-
-MIT
